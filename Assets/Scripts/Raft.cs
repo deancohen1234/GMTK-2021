@@ -113,7 +113,7 @@ public class Raft : MonoBehaviour
 
     private void EvaulateCollisionWalls()
     {
-        if (lastRaft == null) { return; }
+        if (lastRaft == null || raftType != RaftType.Lane) { return; }
 
         //do an overlap boxtest with each wall to evaluate walls
         int count = 0;

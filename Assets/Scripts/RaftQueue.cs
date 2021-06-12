@@ -41,6 +41,8 @@ public class RaftQueue : MonoBehaviour
         queuedRafts = new List<QueuedRaft>();
 
         raftTypes = new GameObject[] { lanePrefab, lodgePrefab, larderPrefab, libationPrefab};
+
+        UpdateSelection();
     }
 
     // Update is called once per frame
@@ -62,13 +64,13 @@ public class RaftQueue : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.Q))
         {
             //move selection to left
-            currentSelection = (int)Mathf.Repeat(currentSelection - 1f, queuedRafts.Count);
+            currentSelection = (int)Mathf.Repeat(currentSelection - 1f, queueSize);
             UpdateSelection();
         }
         if (Input.GetKeyDown(KeyCode.E))
         {
             //move selection to right
-            currentSelection = (int)Mathf.Repeat(currentSelection + 1f, queuedRafts.Count);
+            currentSelection = (int)Mathf.Repeat(currentSelection + 1f, queueSize);
             UpdateSelection();
         }
     }
@@ -105,9 +107,10 @@ public class RaftQueue : MonoBehaviour
     {
         if (queuedRafts.Count > 0)
         {
-            Raft raft = queuedRafts[currentSelection].raft;
+            int indexFromSelection = (int)Mathf.Repeat(currentSelection, queuedRafts.Count);
+            Raft raft = queuedRafts[indexFromSelection].raft;
 
-            RemoveRaftFromQueue(currentSelection);
+            RemoveRaftFromQueue(indexFromSelection);
             return raft;
         }
         else
@@ -147,6 +150,7 @@ public class RaftQueue : MonoBehaviour
         Raft raft = queuedRafts[index].raft;
 
         raft.transform.DOMove(spawnPoint.position, ditchMoveDuration).SetEase(ditchEase);
+        Destroy(raft.gameObject, ditchMoveDuration + 1f);
 
         RemoveRaftFromQueue(index);
     }
@@ -154,7 +158,6 @@ public class RaftQueue : MonoBehaviour
     private void RemoveRaftFromQueue(int index)
     {
         queuedRafts.RemoveAt(index);
-        currentSelection = Mathf.Max(currentSelection - 1, 0);
     }
 
     private void OnQueueChanged()
@@ -174,7 +177,8 @@ public class RaftQueue : MonoBehaviour
 
     private void UpdateSelection()
     {
-        raftSelector.transform.position = queuedRafts[currentSelection].raft.transform.position + Vector3.up * 1.5f;
+        float stepSize = queueWidth / (queueSize - 1);
+        raftSelector.transform.position = transform.position + (queueDirection * stepSize * currentSelection) - queueDirection * queueWidth * 0.5f + Vector3.up * 1.5f;
     }
 
     private Vector3 GetQueueRaftPosition(QueuedRaft queuedRaft)
