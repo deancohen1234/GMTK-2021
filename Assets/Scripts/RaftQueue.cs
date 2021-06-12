@@ -5,6 +5,9 @@ using UnityEngine;
 
 public class RaftQueue : MonoBehaviour
 {
+    [Header("References")]
+    public Transform raftSelector;
+
     [Header("Spawning")]
     public GameObject raftPrefab;
     public Transform spawnPoint;

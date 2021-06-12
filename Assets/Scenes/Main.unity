@@ -582,6 +582,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 930f3428cb039f74bb0583f514e6134d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  raftSelector: {fileID: 0}
   raftPrefab: {fileID: 8968272872667128452, guid: 44f8ee81e00c50f40a82c51c63fcb101, type: 3}
   spawnPoint: {fileID: 1753637908}
   maxRafts: 20
