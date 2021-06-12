@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 [RequireComponent(typeof(Rigidbody))]
-public class BoatLord : MonoBehaviour
+public class BoatLordMover : MonoBehaviour
 {
     [Header("Movement")]
     public float maxSpeed;

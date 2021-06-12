@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 103190211}
   - component: {fileID: 103190210}
   - component: {fileID: 103190209}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ColliderFloor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -104,7 +104,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 380587825246536957}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SouthConnection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -134,7 +134,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4593053491007153944}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: ConnectionTransforms
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -168,7 +168,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3047229260482201116}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EastConnection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -198,7 +198,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4781920140293528850}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: WestConnection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -228,7 +228,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8666313745577845915}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NorthConnection
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -261,7 +261,7 @@ GameObject:
   - component: {fileID: 8968272872266134284}
   - component: {fileID: 8968272872266134285}
   - component: {fileID: 8968272872266134286}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: EastWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -356,7 +356,7 @@ GameObject:
   - component: {fileID: 8968272872322203406}
   - component: {fileID: 8968272872322203407}
   - component: {fileID: 8968272872322203408}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: NorthWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -451,7 +451,7 @@ GameObject:
   - component: {fileID: 8968272872460240881}
   - component: {fileID: 8968272872460240882}
   - component: {fileID: 8968272872460240883}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: WestWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -546,7 +546,7 @@ GameObject:
   - component: {fileID: 8968272872649200277}
   - component: {fileID: 8968272872649200278}
   - component: {fileID: 8968272872649200279}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: SouthWall
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -639,7 +639,7 @@ GameObject:
   m_Component:
   - component: {fileID: 8968272872667128451}
   - component: {fileID: 8968272872667128450}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Raft
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -683,6 +683,8 @@ MonoBehaviour:
   southCollider: {fileID: 8968272872649200279}
   eastCollider: {fileID: 8968272872266134286}
   westCollider: {fileID: 8968272872460240883}
+  groundCollider: {fileID: 103190209}
+  dockedLayer: 8
   dockingDuration: 2
   easeType: 10
 --- !u!1 &8968272872690874482
@@ -696,7 +698,7 @@ GameObject:
   - component: {fileID: 8968272872690874478}
   - component: {fileID: 8968272872690874479}
   - component: {fileID: 8968272872690874480}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: RaftMesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -775,7 +777,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8968272872996748766}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Colliders
   m_TagString: Untagged
   m_Icon: {fileID: 0}
