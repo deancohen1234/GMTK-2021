@@ -21,6 +21,11 @@ public class RaftQueue : MonoBehaviour
     public float moveIntoQueueDuration = 0.75f;
     public Ease moveIntoQueueEase = Ease.OutCirc;
 
+    [Header("Ditching")]
+    public Vector2 waitInQueueDurationMinMax = new Vector2(3f, 4f);
+    public float ditchMoveDuration = 2f;
+    public Ease ditchEase = Ease.InBack;
+
     private float nextRaftSpawnTime;
 
     private List<QueuedRaft> queuedRafts;
@@ -35,6 +40,19 @@ public class RaftQueue : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        GetInputs();
+
+        CheckRaftQueueTimes();
+
+        if (Time.time > nextRaftSpawnTime)
+        {
+            nextRaftSpawnTime = Time.time + spawnInterval;
+            SpawnRaft();
+        }
+    }
+
+    private void GetInputs()
+    {
         if (Input.GetKeyDown(KeyCode.Q))
         {
             //move selection to left
@@ -47,11 +65,16 @@ public class RaftQueue : MonoBehaviour
             currentSelection = (int)Mathf.Repeat(currentSelection + 1f, queuedRafts.Count);
             UpdateSelection();
         }
+    }
 
-        if (Time.time > nextRaftSpawnTime)
+    private void CheckRaftQueueTimes()
+    {
+        for (int i = 0; i < queuedRafts.Count; i++)
         {
-            nextRaftSpawnTime = Time.time + spawnInterval;
-            SpawnRaft();
+            if (Time.time > queuedRafts[i].ditchQueueTime)
+            {
+                DitchBoat(i);
+            }
         }
     }
 
@@ -76,8 +99,6 @@ public class RaftQueue : MonoBehaviour
     {
         if (queuedRafts.Count > 0)
         {
-            int randomIndex = Random.Range(0, queuedRafts.Count);
-
             Raft raft = queuedRafts[currentSelection].raft;
 
             RemoveRaftFromQueue(currentSelection);
@@ -100,6 +121,7 @@ public class RaftQueue : MonoBehaviour
             QueuedRaft queuedRaft;
             queuedRaft.raft = raft.GetComponent<Raft>();
             queuedRaft.queueLocation = queuedRafts.Count;
+            queuedRaft.ditchQueueTime = Time.time + Random.Range(waitInQueueDurationMinMax.x, waitInQueueDurationMinMax.y);
 
             queuedRafts.Add(queuedRaft);
 
@@ -107,10 +129,19 @@ public class RaftQueue : MonoBehaviour
         }
     }
 
+    private void DitchBoat(int index) 
+    {
+        Raft raft = queuedRafts[index].raft;
+
+        raft.transform.DOMove(spawnPoint.position, ditchMoveDuration).SetEase(ditchEase);
+
+        RemoveRaftFromQueue(index);
+    }
+
     private void RemoveRaftFromQueue(int index)
     {
         queuedRafts.RemoveAt(index);
-        OnQueueChanged();
+        currentSelection = Mathf.Max(currentSelection - 1, 0);
     }
 
     private void OnQueueChanged()
@@ -127,7 +158,6 @@ public class RaftQueue : MonoBehaviour
             queuedRaft.raft.transform.DOMove(destinationPosition, moveIntoQueueDuration).SetEase(moveIntoQueueEase);
         }
     }
-
 
     private void UpdateSelection()
     {
@@ -146,4 +176,5 @@ public struct QueuedRaft
 {
     public Raft raft;
     public int queueLocation;
+    public float ditchQueueTime;
 }
