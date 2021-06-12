@@ -47,7 +47,6 @@ public class BoatLord : MonoBehaviour
         direction = direction.normalized;
 
         Vector3 desiredVelocity = direction * maxSpeed;
-        Debug.Log("Vel: " + desiredVelocity);
 
         Vector3 velocityChange = Vector3.MoveTowards(body.velocity, desiredVelocity, maxAcceleration * Time.fixedDeltaTime);
 
