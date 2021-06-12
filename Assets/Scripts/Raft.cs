@@ -25,6 +25,8 @@ public class Raft : MonoBehaviour
     [Header("Connection Sequence")]
     public int dockedLayer = 7;
     public float dockingDuration = 2.0f;
+    public float dockingXOffset = 2.5f;
+    public float dockingAccleration = 20f;
     public Ease easeType = Ease.InOutCubic;
 
     private Vector3 northConnectionOffset;
@@ -32,7 +34,10 @@ public class Raft : MonoBehaviour
     private Vector3 eastConnectionOffset;
     private Vector3 westConnectionOffset;
 
-    private bool isConnectedToPlatform;
+    private BezierCurve moveToPlatformCurve;
+
+    private bool isConnectingToPlatform;
+    private float curveTime;
 
     void Start()
     {
@@ -49,6 +54,14 @@ public class Raft : MonoBehaviour
         }
 
         PrecalculateDirectionOffsets();
+    }
+
+    private void Update()
+    {
+        if (isConnectingToPlatform)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, moveToPlatformCurve.Evaluate(curveTime), Time.deltaTime * dockingAccleration);
+        }
     }
 
     //join THIS raft to the destination raft at the set direction
@@ -84,11 +97,6 @@ public class Raft : MonoBehaviour
         }
     }
 
-    public bool IsConnectedToPlatform()
-    {
-        return isConnectedToPlatform;
-    }
-
     //direction is the connection direction that THIS raft is using to connect to the platform
     private Vector3 GetRaftConnectionPosition(Raft raft, ConnectionDirection direction)
     {
@@ -112,6 +120,14 @@ public class Raft : MonoBehaviour
         }
     }
 
+    private Vector3 GetRaftBezierAnchorPoint(Vector3 destinationPoint)
+    {
+        float sign = destinationPoint.x <= 0 ? -1f : 1f;
+
+        Vector3 anchorPosition = new Vector3(dockingXOffset * sign + transform.position.x, transform.position.y, destinationPoint.z);
+        return anchorPosition;
+    }
+
     private void PrecalculateDirectionOffsets()
     {
         northConnectionOffset = (transform.position - northConnection.position);
@@ -123,8 +139,15 @@ public class Raft : MonoBehaviour
     private void StartRaftMoveSequence(Raft destinationRaft, ConnectionDirection direction)
     {
         Vector3 destinationRaftPosition = GetRaftConnectionPosition(destinationRaft, direction);
-        transform.DOMove(destinationRaftPosition, dockingDuration).SetEase(easeType);
+        Vector3 anchorPosition = GetRaftBezierAnchorPoint(destinationRaftPosition);
+
+        moveToPlatformCurve = new BezierCurve(transform.position, destinationRaftPosition, anchorPosition);
+
+        DOTween.To(() => curveTime, x => curveTime = x, 1.0f, dockingDuration).SetEase(easeType).OnComplete(() => isConnectingToPlatform = false);
+
+        isConnectingToPlatform = true;
     }
+
 
     private void SetAllToLayer(int layer)
     {

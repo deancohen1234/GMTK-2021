@@ -686,6 +686,8 @@ MonoBehaviour:
   groundCollider: {fileID: 103190209}
   dockedLayer: 8
   dockingDuration: 2
+  dockingXOffset: 5
+  dockingAccleration: 20
   easeType: 10
 --- !u!1 &8968272872690874482
 GameObject:

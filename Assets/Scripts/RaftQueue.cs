@@ -15,6 +15,9 @@ public class RaftQueue : MonoBehaviour
     public int queueSize = 5;
     public float queueWidth = 10f;
     public Vector3 queueDirection = new Vector3(1, 0, 0);
+    public float moveIntoQueueDuration = 0.75f;
+    public Ease moveIntoQueueEase = Ease.OutCirc;
+
     private float nextRaftSpawnTime;
 
     private List<QueuedRaft> queuedRafts;
@@ -73,12 +76,7 @@ public class RaftQueue : MonoBehaviour
     private void RemoveRaftFromQueue(int index)
     {
         queuedRafts.RemoveAt(index);
-
-        foreach (QueuedRaft r in queuedRafts)
-        {
-            Debug.Log(r.raft.gameObject.name);
-        }
-        //OnQueueChanged();
+        OnQueueChanged();
     }
 
     private void OnQueueChanged()
@@ -92,9 +90,7 @@ public class RaftQueue : MonoBehaviour
 
             //move all queued rafts to their proper positions
             Vector3 destinationPosition = GetQueueRaftPosition(queuedRaft);
-            queuedRaft.raft.transform.DOMove(destinationPosition, 0.75f).SetEase(Ease.OutCirc);
-
-            Debug.Log("Updated Count: " + queuedRafts[i].raft.gameObject.name);
+            queuedRaft.raft.transform.DOMove(destinationPosition, moveIntoQueueDuration).SetEase(moveIntoQueueEase);
         }
     }
 

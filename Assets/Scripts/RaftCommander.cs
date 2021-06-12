@@ -32,6 +32,8 @@ public class RaftCommander : MonoBehaviour
 
     void Update()
     {
+        Debug.Log("Current DirectionL " + currentDirection);
+
         if (Input.GetKeyDown(KeyCode.F))
         {
             HailRaft();
@@ -45,6 +47,7 @@ public class RaftCommander : MonoBehaviour
             nextCheckRaftsTime = Time.time + checkInterval;
             CheckForCurrentRaft();
             CalculateRaftDirection();
+
             
             FindAllVisibleRafts();
         }       
