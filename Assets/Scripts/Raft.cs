@@ -180,8 +180,6 @@ public class Raft : MonoBehaviour
                 break;
         }
 
-        Debug.Log("Count: " + count);
-
         return count <= 1;
     }
 
