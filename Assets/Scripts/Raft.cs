@@ -143,13 +143,54 @@ public class Raft : MonoBehaviour
         }
     }
 
+    public Vector3 GetEmptyRaftPosition(ConnectionDirection direction)
+    {
+        switch (direction)
+        {
+            case ConnectionDirection.North:
+                return northConnection.position - northConnectionOffset;
+            case ConnectionDirection.South:
+                return southConnection.position - southConnectionOffset;
+            case ConnectionDirection.East:
+                return eastConnection.position - eastConnectionOffset;
+            case ConnectionDirection.West:
+                return westConnection.position - westConnectionOffset;
+            default:
+                return Vector3.zero;
+        }
+    }
+
+    public bool IsRaftDirectionClear(ConnectionDirection direction)
+    {
+        int count = 0;
+
+        switch (direction)
+        {
+            case ConnectionDirection.North:
+                count = Physics.OverlapSphereNonAlloc(this.northConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                break;
+            case ConnectionDirection.South:
+                count = Physics.OverlapSphereNonAlloc(this.southConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                break;
+            case ConnectionDirection.East:
+                count = Physics.OverlapSphereNonAlloc(this.eastConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                break;
+            case ConnectionDirection.West:
+                count = Physics.OverlapSphereNonAlloc(this.westConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                break;
+        }
+
+        return count <= 2;
+
+    }
+
     private Raft GetRaftFromCollider(Collider collider)
     {
         return collider.GetComponentInParent<Raft>();
     }
 
     //direction is the connection direction that THIS raft is using to connect to the platform
-    private Vector3 GetRaftConnectionPosition(Raft raft, ConnectionDirection direction)
+    public Vector3 GetRaftConnectionPosition(Raft raft, ConnectionDirection direction)
     {
         Vector3 raftConnectionPosition = raft.GetConnectionTransform(direction).position;
 
@@ -170,6 +211,8 @@ public class Raft : MonoBehaviour
                 return raftConnectionPosition;
         }
     }
+
+
 
     private Vector3 GetRaftBezierAnchorPoint(Vector3 destinationPoint)
     {
