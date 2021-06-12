@@ -167,26 +167,22 @@ public class Raft : MonoBehaviour
         switch (direction)
         {
             case ConnectionDirection.North:
-                count = Physics.OverlapSphereNonAlloc(this.northConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                count = Physics.OverlapSphereNonAlloc(this.northConnection.position, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
                 break;
             case ConnectionDirection.South:
-                count = Physics.OverlapSphereNonAlloc(this.southConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                count = Physics.OverlapSphereNonAlloc(this.southConnection.position, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
                 break;
             case ConnectionDirection.East:
-                count = Physics.OverlapSphereNonAlloc(this.eastConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                count = Physics.OverlapSphereNonAlloc(this.eastConnection.position, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
                 break;
             case ConnectionDirection.West:
-                count = Physics.OverlapSphereNonAlloc(this.westConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+                count = Physics.OverlapSphereNonAlloc(this.westConnection.position, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
                 break;
         }
 
-        return count <= 2;
+        Debug.Log("Count: " + count);
 
-    }
-
-    private Raft GetRaftFromCollider(Collider collider)
-    {
-        return collider.GetComponentInParent<Raft>();
+        return count <= 1;
     }
 
     //direction is the connection direction that THIS raft is using to connect to the platform
@@ -198,7 +194,6 @@ public class Raft : MonoBehaviour
         {
             case ConnectionDirection.North:
                 return raftConnectionPosition - northConnectionOffset;
-
             case ConnectionDirection.South:
                 return raftConnectionPosition - southConnectionOffset;
 
@@ -211,8 +206,6 @@ public class Raft : MonoBehaviour
                 return raftConnectionPosition;
         }
     }
-
-
 
     private Vector3 GetRaftBezierAnchorPoint(Vector3 destinationPoint)
     {
@@ -244,29 +237,6 @@ public class Raft : MonoBehaviour
         southConnection.gameObject.layer = layer;
         eastConnection.gameObject.layer = layer;
         westConnection.gameObject.layer = layer;
-    }
-
-    private void DisableDirectionColliders(Raft destinationRaft, ConnectionDirection direction)
-    {
-        switch (direction)
-        {
-            case ConnectionDirection.North:
-                destinationRaft.northCollider.enabled = false;
-                this.southCollider.enabled = false;
-                break;
-            case ConnectionDirection.South:
-                destinationRaft.southCollider.enabled = false;
-                this.northCollider.enabled = false;
-                break;
-            case ConnectionDirection.East:
-                destinationRaft.eastCollider.enabled = false;
-                this.westCollider.enabled = false;
-                break;
-            case ConnectionDirection.West:
-                destinationRaft.westCollider.enabled = false;
-                this.eastCollider.enabled = false;
-                break;
-        }
     }
 
     private void DisableCurrentWallColliders(int count)

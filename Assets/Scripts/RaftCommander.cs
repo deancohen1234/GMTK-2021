@@ -48,9 +48,7 @@ public class RaftCommander : MonoBehaviour
             nextCheckRaftsTime = Time.time + checkInterval;
             CheckForCurrentRaft();
             CalculateRaftDirection();
-
             
-            //FindAllVisibleRafts();
         }
 
         DisplayRaftPlacement();
@@ -58,11 +56,14 @@ public class RaftCommander : MonoBehaviour
 
     private void HailRaft()
     {
-        Raft closestRaft = raftQueue.GetSelectedRaft();
-        if (closestRaft != null)
+        if (currentRaft.IsRaftDirectionClear(currentDirection)) 
         {
-            closestRaft.JoinRaft(currentRaft, currentDirection);
-        }
+            Raft closestRaft = raftQueue.GetSelectedRaft();
+            if (closestRaft != null)
+            {
+                closestRaft.JoinRaft(currentRaft, currentDirection);
+            }
+        }      
     }
 
     private Raft GetClosestRaft()
@@ -152,6 +153,10 @@ public class RaftCommander : MonoBehaviour
         if (currentRaft.IsRaftDirectionClear(currentDirection))
         {
             raftPlacementSelector.position = currentRaft.GetEmptyRaftPosition(currentDirection);
+        }
+        else
+        {
+            raftPlacementSelector.position = NETHERREALMPOSITION;
         }
 
     }
