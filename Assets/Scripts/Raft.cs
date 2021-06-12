@@ -23,7 +23,7 @@ public class Raft : MonoBehaviour
     public Collider groundCollider;
 
     [Header("Connection Sequence")]
-    public int dockedLayer = 7;
+    public int dockedLayer = 8;
     public float dockingDuration = 2.0f;
     public float dockingXOffset = 2.5f;
     public float dockingAccleration = 20f;
@@ -34,10 +34,15 @@ public class Raft : MonoBehaviour
     private Vector3 eastConnectionOffset;
     private Vector3 westConnectionOffset;
 
+    private Collider[] wallCheckColliders;
+
     private BezierCurve moveToPlatformCurve;
+    private Raft lastRaft;
 
     private bool isConnectingToPlatform;
     private float curveTime;
+
+    private const float WALLSPHERECHECKRADIUS = 0.25f;
 
     void Start()
     {
@@ -52,6 +57,8 @@ public class Raft : MonoBehaviour
             Debug.LogError("No Collider Set For Connections damnit");
             return;
         }
+
+        wallCheckColliders = new Collider[5];
 
         PrecalculateDirectionOffsets();
     }
@@ -76,8 +83,47 @@ public class Raft : MonoBehaviour
         StartRaftMoveSequence(destinationRaft, direction);
 
         SetAllToLayer(dockedLayer);
+    }
+    private void StartRaftMoveSequence(Raft destinationRaft, ConnectionDirection direction)
+    {
+        Vector3 destinationRaftPosition = GetRaftConnectionPosition(destinationRaft, direction);
+        Vector3 anchorPosition = GetRaftBezierAnchorPoint(destinationRaftPosition);
 
-        DisableDirectionColliders(destinationRaft, direction);
+        moveToPlatformCurve = new BezierCurve(transform.position, destinationRaftPosition, anchorPosition);
+
+        DOTween.To(() => curveTime, x => curveTime = x, 1.0f, dockingDuration).SetEase(easeType).OnComplete(OnJoinComplete);
+
+        lastRaft = destinationRaft;
+
+        isConnectingToPlatform = true;
+    }
+
+    private void OnJoinComplete()
+    {
+        isConnectingToPlatform = false;
+        curveTime = 0;
+
+        EvaulateCollisionWalls();
+    }
+
+    private void EvaulateCollisionWalls()
+    {
+        if (lastRaft == null) { return; }
+
+        //do an overlap boxtest with each wall to evaluate walls
+        int count = 0;
+
+        count = Physics.OverlapSphereNonAlloc(northConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+        if (count >= 2) { DisableCurrentWallColliders(count); }
+
+        count = Physics.OverlapSphereNonAlloc(southConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+        if (count >= 2) { DisableCurrentWallColliders(count); }
+
+        count = Physics.OverlapSphereNonAlloc(eastConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+        if (count >= 2) { DisableCurrentWallColliders(count); }
+
+        count = Physics.OverlapSphereNonAlloc(westConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
+        if (count >= 2) { DisableCurrentWallColliders(count); }
     }
 
     public Transform GetConnectionTransform(ConnectionDirection direction)
@@ -95,6 +141,11 @@ public class Raft : MonoBehaviour
             default:
                 return null;
         }
+    }
+
+    private Raft GetRaftFromCollider(Collider collider)
+    {
+        return collider.GetComponentInParent<Raft>();
     }
 
     //direction is the connection direction that THIS raft is using to connect to the platform
@@ -136,19 +187,6 @@ public class Raft : MonoBehaviour
         westConnectionOffset = (transform.position - westConnection.position);
     }
 
-    private void StartRaftMoveSequence(Raft destinationRaft, ConnectionDirection direction)
-    {
-        Vector3 destinationRaftPosition = GetRaftConnectionPosition(destinationRaft, direction);
-        Vector3 anchorPosition = GetRaftBezierAnchorPoint(destinationRaftPosition);
-
-        moveToPlatformCurve = new BezierCurve(transform.position, destinationRaftPosition, anchorPosition);
-
-        DOTween.To(() => curveTime, x => curveTime = x, 1.0f, dockingDuration).SetEase(easeType).OnComplete(() => isConnectingToPlatform = false);
-
-        isConnectingToPlatform = true;
-    }
-
-
     private void SetAllToLayer(int layer)
     {
         gameObject.layer = layer;
@@ -185,6 +223,17 @@ public class Raft : MonoBehaviour
                 destinationRaft.westCollider.enabled = false;
                 this.eastCollider.enabled = false;
                 break;
+        }
+    }
+
+    private void DisableCurrentWallColliders(int count)
+    {
+        for (int i = 0; i < count; i++)
+        {
+            if (wallCheckColliders[i] != null)
+            {
+                wallCheckColliders[i].enabled = false;
+            }
         }
     }
 }

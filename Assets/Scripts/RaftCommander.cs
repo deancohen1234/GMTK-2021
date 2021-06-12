@@ -55,7 +55,6 @@ public class RaftCommander : MonoBehaviour
 
     private void HailRaft()
     {
-        //Raft closestRaft = GetClosestRaft();
         Raft closestRaft = raftQueue.GetRandomRaft();
         if (closestRaft != null)
         {
