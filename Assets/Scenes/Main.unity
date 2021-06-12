@@ -585,7 +585,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   raftSelector: {fileID: 2052573220}
-  raftPrefab: {fileID: 8968272872667128452, guid: 44f8ee81e00c50f40a82c51c63fcb101, type: 3}
+  lanePrefab: {fileID: 8968272872667128452, guid: 72edeb50d4f237b4c9e02cff715d6845, type: 3}
+  lodgePrefab: {fileID: 8968272872667128452, guid: 46b980fd115b8f540bada6460ed54f11, type: 3}
+  larderPrefab: {fileID: 8968272872667128452, guid: c49cedbdafac91040ba8f3aca26cd742, type: 3}
+  libationPrefab: {fileID: 8968272872667128452, guid: 38969726ca7eedc478853b16c1763065, type: 3}
   spawnPoint: {fileID: 1753637908}
   maxRafts: 20
   spawnInterval: 4

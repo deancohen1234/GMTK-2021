@@ -7,8 +7,13 @@ using UnityEngine;
 //West = X Backward (Global) -
 
 public enum ConnectionDirection { North, South, East, West }
+public enum RaftType { Lane, Libations, Lodging, Larder}
 public class Raft : MonoBehaviour
 {
+    [Header("Setup")]
+    public RaftType raftType;
+    public string onConnectedTriggerString;
+
     [Header("Connection Points")]
     public Transform northConnection;
     public Transform southConnection;

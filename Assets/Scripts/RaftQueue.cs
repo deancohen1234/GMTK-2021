@@ -9,7 +9,10 @@ public class RaftQueue : MonoBehaviour
     public Transform raftSelector;
 
     [Header("Spawning")]
-    public GameObject raftPrefab;
+    public GameObject lanePrefab;
+    public GameObject lodgePrefab;
+    public GameObject larderPrefab;
+    public GameObject libationPrefab;
     public Transform spawnPoint;
     public int maxRafts = 20;
     public float spawnInterval = 1.5f;
@@ -29,12 +32,15 @@ public class RaftQueue : MonoBehaviour
     private float nextRaftSpawnTime;
 
     private List<QueuedRaft> queuedRafts;
+    private GameObject[] raftTypes;
     private int currentSelection;
 
     // Start is called before the first frame update
     void Start()
     {
         queuedRafts = new List<QueuedRaft>();
+
+        raftTypes = new GameObject[] { lanePrefab, lodgePrefab, larderPrefab, libationPrefab};
     }
 
     // Update is called once per frame
@@ -114,7 +120,7 @@ public class RaftQueue : MonoBehaviour
     {
         if (queuedRafts.Count < queueSize)
         {
-            GameObject raft = Instantiate(raftPrefab);
+            GameObject raft = Instantiate(PickRaftType());
             raft.gameObject.name = "Raft: " + Random.Range(0.0f, 1.0f);
             raft.transform.position = spawnPoint.position;
 
@@ -127,6 +133,13 @@ public class RaftQueue : MonoBehaviour
 
             OnQueueChanged();
         }
+    }
+
+    private GameObject PickRaftType()
+    {
+        int randomRange = Random.Range(0, raftTypes.Length);
+
+        return raftTypes[randomRange];
     }
 
     private void DitchBoat(int index) 
