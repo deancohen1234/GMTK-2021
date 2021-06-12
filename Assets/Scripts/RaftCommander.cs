@@ -53,7 +53,7 @@ public class RaftCommander : MonoBehaviour
 
     private void HailRaft()
     {
-        Raft closestRaft = raftQueue.GetRandomRaft();
+        Raft closestRaft = raftQueue.GetSelectedRaft();
         if (closestRaft != null)
         {
             closestRaft.JoinRaft(currentRaft, currentDirection);

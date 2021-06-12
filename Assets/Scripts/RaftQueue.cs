@@ -24,6 +24,7 @@ public class RaftQueue : MonoBehaviour
     private float nextRaftSpawnTime;
 
     private List<QueuedRaft> queuedRafts;
+    private int currentSelection;
 
     // Start is called before the first frame update
     void Start()
@@ -34,6 +35,19 @@ public class RaftQueue : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Q))
+        {
+            //move selection to left
+            currentSelection = (int)Mathf.Repeat(currentSelection - 1f, queuedRafts.Count);
+            UpdateSelection();
+        }
+        if (Input.GetKeyDown(KeyCode.E))
+        {
+            //move selection to right
+            currentSelection = (int)Mathf.Repeat(currentSelection + 1f, queuedRafts.Count);
+            UpdateSelection();
+        }
+
         if (Time.time > nextRaftSpawnTime)
         {
             nextRaftSpawnTime = Time.time + spawnInterval;
@@ -56,6 +70,23 @@ public class RaftQueue : MonoBehaviour
         {
             return null;
         }       
+    }
+
+    public Raft GetSelectedRaft()
+    {
+        if (queuedRafts.Count > 0)
+        {
+            int randomIndex = Random.Range(0, queuedRafts.Count);
+
+            Raft raft = queuedRafts[currentSelection].raft;
+
+            RemoveRaftFromQueue(currentSelection);
+            return raft;
+        }
+        else
+        {
+            return null;
+        }
     }
 
     private void SpawnRaft()
@@ -95,6 +126,12 @@ public class RaftQueue : MonoBehaviour
             Vector3 destinationPosition = GetQueueRaftPosition(queuedRaft);
             queuedRaft.raft.transform.DOMove(destinationPosition, moveIntoQueueDuration).SetEase(moveIntoQueueEase);
         }
+    }
+
+
+    private void UpdateSelection()
+    {
+        raftSelector.transform.position = queuedRafts[currentSelection].raft.transform.position + Vector3.up * 1.5f;
     }
 
     private Vector3 GetQueueRaftPosition(QueuedRaft queuedRaft)
