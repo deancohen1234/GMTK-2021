@@ -28,6 +28,11 @@ public class Raft : MonoBehaviour
     public Collider westCollider;
     public Collider groundCollider;
 
+    [Header("Extras")]
+    public GameObject[] allProps;
+    public Material[] allMaterials;
+    public MeshRenderer meshRenderer;
+
     [Header("Connection Sequence")]
     public int dockedLayer = 8;
     public float dockingDuration = 2.0f;
@@ -78,6 +83,21 @@ public class Raft : MonoBehaviour
         {
             transform.position = Vector3.MoveTowards(transform.position, moveToPlatformCurve.Evaluate(curveTime), Time.deltaTime * dockingAccleration);
         }
+    }
+
+    public void Initialize()
+    {
+        //randomize props and mats
+        //if > 0.5f then show prop
+        for (int i = 0; i < allProps.Length; i++)
+        {
+            float rand = Random.Range(0.0f, 1.0f);
+
+            if (rand < 0.5f) { allProps[i].SetActive(false); }
+        }
+
+        int randomMaterialIndex = Random.Range(0, allMaterials.Length);
+        meshRenderer.material = allMaterials[randomMaterialIndex];
     }
 
     //join THIS raft to the destination raft at the set direction

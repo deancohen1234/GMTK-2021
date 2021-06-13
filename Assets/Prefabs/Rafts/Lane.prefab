@@ -636,6 +636,12 @@ MonoBehaviour:
   eastCollider: {fileID: 8968272872266134286}
   westCollider: {fileID: 8968272872460240883}
   groundCollider: {fileID: 103190209}
+  allProps: []
+  allMaterials:
+  - {fileID: 2100000, guid: 19b6445e03d58f740b9e434281254752, type: 2}
+  - {fileID: 2100000, guid: e1b50a791ef7df7478f70fda3ead29e6, type: 2}
+  - {fileID: 2100000, guid: 2d1201200dd23234c85c757d754ad2b9, type: 2}
+  meshRenderer: {fileID: 3034444751788777424}
   dockedLayer: 8
   dockingDuration: 2
   dockingXOffset: 10
@@ -833,5 +839,10 @@ PrefabInstance:
 --- !u!4 &4204021948108563647 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 978816afa9f349241a0eec8fb21ac2d3, type: 3}
+  m_PrefabInstance: {fileID: 4457744277539750740}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &3034444751788777424 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: -7511558181221131132, guid: 978816afa9f349241a0eec8fb21ac2d3, type: 3}
   m_PrefabInstance: {fileID: 4457744277539750740}
   m_PrefabAsset: {fileID: 0}

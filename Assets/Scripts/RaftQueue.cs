@@ -160,6 +160,7 @@ public class RaftQueue : MonoBehaviour
             GameObject raft = Instantiate(PickRaftType());
             raft.gameObject.name = "Raft: " + Random.Range(0.0f, 1.0f);
             raft.transform.position = spawnPoint.position;
+            raft.GetComponent<Raft>().Initialize();
 
             QueuedRaft queuedRaft;
             queuedRaft.raft = raft.GetComponent<Raft>();
