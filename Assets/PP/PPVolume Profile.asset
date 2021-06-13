@@ -1,5 +1,31 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5883289724407194207
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6050e2d5de785ce4d931e4dbdbf2d755, type: 3}
+  m_Name: ChromaticAberration
+  m_EditorClassIdentifier: 
+  active: 1
+  enabled:
+    overrideState: 1
+    value: 1
+  spectralLut:
+    overrideState: 1
+    value: {fileID: 0}
+    defaultState: 1
+  intensity:
+    overrideState: 1
+    value: 0.2
+  fastMode:
+    overrideState: 1
+    value: 0
 --- !u!114 &-5596076204113284467
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -52,8 +78,8 @@ MonoBehaviour:
     overrideState: 0
     value: 1
   temperature:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 9
   tint:
     overrideState: 0
     value: 0
@@ -64,11 +90,11 @@ MonoBehaviour:
     overrideState: 0
     value: 0
   saturation:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 22
   brightness:
-    overrideState: 0
-    value: 0
+    overrideState: 1
+    value: 14
   postExposure:
     overrideState: 0
     value: 0
@@ -1327,6 +1353,7 @@ MonoBehaviour:
   - {fileID: -5596076204113284467}
   - {fileID: 3725187914915700890}
   - {fileID: 1235607559058634479}
+  - {fileID: -5883289724407194207}
 --- !u!114 &1235607559058634479
 MonoBehaviour:
   m_ObjectHideFlags: 3
@@ -1389,7 +1416,7 @@ MonoBehaviour:
     value: 1
   intensity:
     overrideState: 1
-    value: 0
+    value: 0.15
   threshold:
     overrideState: 1
     value: 1
