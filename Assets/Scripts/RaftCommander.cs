@@ -6,6 +6,7 @@ public class RaftCommander : MonoBehaviour
 {
     [Header("References")]
     public RaftQueue raftQueue;
+    public Transform raftPlacementSelector;
 
     [Header("Raft Detection")]
     public LayerMask raftCheckMask;
@@ -21,6 +22,8 @@ public class RaftCommander : MonoBehaviour
     private Collider[] visibleRaftCheckColliders;
 
     private float nextCheckRaftsTime = 0;
+
+    private Vector3 NETHERREALMPOSITION = new Vector3(100, 100, 100); 
 
     // Start is called before the first frame update
     void Start()
@@ -46,18 +49,21 @@ public class RaftCommander : MonoBehaviour
             CheckForCurrentRaft();
             CalculateRaftDirection();
             
-            FindAllVisibleRafts();
-        }       
+        }
+
+        DisplayRaftPlacement();
     }
 
     private void HailRaft()
     {
-        //Raft closestRaft = GetClosestRaft();
-        Raft closestRaft = raftQueue.GetRandomRaft();
-        if (closestRaft != null)
+        if (currentRaft.IsRaftDirectionClear(currentDirection)) 
         {
-            closestRaft.JoinRaft(currentRaft, currentDirection);
-        }
+            Raft closestRaft = raftQueue.GetSelectedRaft();
+            if (closestRaft != null)
+            {
+                closestRaft.JoinRaft(currentRaft, currentDirection);
+            }
+        }      
     }
 
     private Raft GetClosestRaft()
@@ -136,45 +142,22 @@ public class RaftCommander : MonoBehaviour
         }
     }
 
-    private void FindAllVisibleRafts()
+    private void DisplayRaftPlacement()
     {
-        visibleRafts.Clear();
-
-        //clear colliders
-        for (int i = 0; i < visibleRaftCheckColliders.Length; i++)
+        if (currentRaft == null)
         {
-            visibleRaftCheckColliders[i] = null;
+            return;
         }
 
-
-        int foundRafts = Physics.OverlapSphereNonAlloc(transform.position, visiblityRadius, visibleRaftCheckColliders, raftCheckMask);
-        if (foundRafts > 0)
+        //check if there is only one wall on raft (meaning it is empty)
+        if (currentRaft.IsRaftDirectionClear(currentDirection))
         {
-            for (int i = 0; i < visibleRaftCheckColliders.Length; i++)
-            {
-                if (visibleRaftCheckColliders[i] != null)
-                {
-                    Raft raft = null;
-                    raft = visibleRaftCheckColliders[i].gameObject.GetComponentInParent<Raft>();
-
-                    if (!visibleRafts.Contains(raft) && !raft.Equals(currentRaft))
-                    {
-                        visibleRafts.Add(raft);
-                    }
-                }
-            }
+            raftPlacementSelector.position = currentRaft.GetEmptyRaftPosition(currentDirection);
         }
         else
         {
-            for (int i = 0; i < visibleRafts.Count; i++)
-            {
-                visibleRafts[i] = null;
-            }
+            raftPlacementSelector.position = NETHERREALMPOSITION;
         }
-    }
 
-    private void CheckVisibleSize()
-    {
-        Debug.Log("Count: " + visibleRafts.Count);
     }
 }
