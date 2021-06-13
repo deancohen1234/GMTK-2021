@@ -178,7 +178,7 @@ public class RaftQueue : MonoBehaviour
     private void UpdateSelection()
     {
         float stepSize = queueWidth / (queueSize - 1);
-        raftSelector.transform.position = transform.position + (queueDirection * stepSize * currentSelection) - queueDirection * queueWidth * 0.5f + Vector3.up * 1.5f;
+        raftSelector.transform.position = transform.position + (queueDirection * stepSize * currentSelection) - queueDirection * queueWidth * 0.5f + Vector3.up * 2.25f;
     }
 
     private Vector3 GetQueueRaftPosition(QueuedRaft queuedRaft)
