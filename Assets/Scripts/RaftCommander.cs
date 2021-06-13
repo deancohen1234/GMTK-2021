@@ -16,22 +16,18 @@ public class RaftCommander : MonoBehaviour
     private Raft currentRaft;
     private ConnectionDirection currentDirection;
 
-    private List<Raft> visibleRafts;
-
     private RaycastHit[] raftCheckHits;
-    private Collider[] visibleRaftCheckColliders;
 
     private float nextCheckRaftsTime = 0;
 
-    private Vector3 NETHERREALMPOSITION = new Vector3(100, 100, 100); 
+    private Vector3 NETHERREALMPOSITION = new Vector3(100, 100, 100);
+    private float PLACEMENTSELECTORHEIGHTOFFSET = 0.5f;
 
     // Start is called before the first frame update
     void Start()
     {
         raftCheckHits = new RaycastHit[5];
-        visibleRaftCheckColliders = new Collider[15];
-        visibleRafts = new List<Raft>();
-}
+    }
 
     void Update()
     {
@@ -64,26 +60,6 @@ public class RaftCommander : MonoBehaviour
                 closestRaft.JoinRaft(currentRaft, currentDirection);
             }
         }      
-    }
-
-    private Raft GetClosestRaft()
-    {
-        Raft raft = null;
-        if (visibleRafts.Count > 0)
-        {
-            float shortestDist = float.MaxValue;
-            for (int i = 0; i < visibleRafts.Count; i++)
-            {
-                float dist = Vector3.Distance(transform.position, visibleRafts[i].transform.position);
-                if (dist < shortestDist)
-                {
-                    shortestDist = dist;
-                    raft = visibleRafts[i];
-                }
-            }
-        }
-
-        return raft;
     }
 
     private void CheckForCurrentRaft()
@@ -152,7 +128,7 @@ public class RaftCommander : MonoBehaviour
         //check if there is only one wall on raft (meaning it is empty)
         if (currentRaft.IsRaftDirectionClear(currentDirection))
         {
-            raftPlacementSelector.position = currentRaft.GetEmptyRaftPosition(currentDirection);
+            raftPlacementSelector.position = currentRaft.GetEmptyRaftPosition(currentDirection) + Vector3.up * PLACEMENTSELECTORHEIGHTOFFSET;
         }
         else
         {

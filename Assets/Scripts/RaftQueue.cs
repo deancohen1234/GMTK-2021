@@ -169,8 +169,6 @@ public class RaftQueue : MonoBehaviour
             Vector3 destinationPosition = GetQueueRaftPosition(queuedRaft);
             queuedRaft.raft.transform.DOMove(destinationPosition, moveIntoQueueDuration).SetEase(moveIntoQueueEase);
 
-            Debug.Log(queuedRaft.queueLocation);
-
             queuedRafts.Add(queuedRaft);
         }
     }

@@ -10,6 +10,8 @@ public class GameManager : MonoBehaviour
     public static GameManager instance;
 
     [Header("References")]
+    public DaylightController daylightController;
+    public AutoOrbitingCamera autoRotatingCamera;
     public RaftQueue raftQueue;
     public RaftCommander raftCommander;
     public TextMeshProUGUI timerText;
@@ -18,13 +20,11 @@ public class GameManager : MonoBehaviour
 
     [Header("Time")]
     public float gameDuration = 120f; //in seconds
-    public int numDaysInGame = 3;
 
     [Header("Reloading")]
     public string mainSceneName = "Main";
 
     private float gameEndTime = 0;
-    private float timePerDay;
 
     private int currentPoints;
 
@@ -35,12 +35,11 @@ public class GameManager : MonoBehaviour
     void Awake()
     {
         instance = this;
+        autoRotatingCamera.enabled = false;
     }
 
     void Start()
     {
-        timePerDay = gameDuration / numDaysInGame;
-
         StartGame();
     }
 
@@ -61,6 +60,9 @@ public class GameManager : MonoBehaviour
             {
                 EndGame();
             }
+
+            float percentageOfDayLeft = (gameDuration - timeLeft) / gameDuration;
+            daylightController.UpdateDaylight(percentageOfDayLeft);
         }
         else
         {
@@ -83,6 +85,7 @@ public class GameManager : MonoBehaviour
 
         raftQueue.enabled = false;
         raftCommander.enabled = false;
+        autoRotatingCamera.enabled = true;
 
         endScreenInstructions.gameObject.SetActive(true);
     }
