@@ -124,7 +124,7 @@ public class GameManager : MonoBehaviour
             {
                 //set looping
                 ParticleSystem.MainModule main = allRafts[i].fireworks.main;
-                main.loop = true;
+                //main.loop = true;
 
                 if (allRafts[i].fullySatisfied)
                 {

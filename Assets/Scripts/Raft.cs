@@ -154,7 +154,7 @@ public class Raft : MonoBehaviour
         count = Physics.OverlapSphereNonAlloc(northConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
         if (count >= 2) 
         {
-            Debug.Log("North Collision");
+            ProcessConnectedRaft(count);
         }
 
         count = Physics.OverlapSphereNonAlloc(southConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
