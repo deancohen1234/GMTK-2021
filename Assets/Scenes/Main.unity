@@ -614,7 +614,7 @@ MonoBehaviour:
   raftCommander: {fileID: 419819711}
   timerText: {fileID: 1585729142}
   pointText: {fileID: 1766864971}
-  gameDuration: 8
+  gameDuration: 120
   numDaysInGame: 3
   mainSceneName: Main
 --- !u!4 &656196811
@@ -1063,6 +1063,7 @@ MonoBehaviour:
   spawnPoint: {fileID: 1753637908}
   maxRafts: 20
   spawnInterval: 4
+  weightedOdds: {x: 3, y: 1, z: 1, w: 1}
   queueSize: 4
   queueWidth: 10
   queueDirection: {x: 1, y: 0, z: 0}

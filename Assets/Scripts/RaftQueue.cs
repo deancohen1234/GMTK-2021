@@ -16,6 +16,7 @@ public class RaftQueue : MonoBehaviour
     public Transform spawnPoint;
     public int maxRafts = 20;
     public float spawnInterval = 1.5f;
+    public Vector4 weightedOdds = new Vector4(5, 1, 1, 1);
 
     [Header("Queue")]
     public int queueSize = 5;
@@ -33,6 +34,8 @@ public class RaftQueue : MonoBehaviour
 
     private List<QueuedRaft> queuedRafts;
     private GameObject[] raftTypes;
+    private int[] weightedIndexArray;
+
     private int currentSelection;
 
     // Start is called before the first frame update
@@ -43,6 +46,7 @@ public class RaftQueue : MonoBehaviour
         raftTypes = new GameObject[] { lanePrefab, lodgePrefab, larderPrefab, libationPrefab};
 
         UpdateSelection();
+        GenerateWeightedIndexArray();
     }
 
     // Update is called once per frame
@@ -56,6 +60,32 @@ public class RaftQueue : MonoBehaviour
         {
             nextRaftSpawnTime = Time.time + spawnInterval;
             SpawnRaft();
+        }
+    }
+
+    //I HATE THIS I'M SORRY
+    private void GenerateWeightedIndexArray()
+    {
+        weightedIndexArray = new int[(int)(weightedOdds.x + weightedOdds.y + weightedOdds.z + weightedOdds.w)];
+
+        for (int i = 0; i < (int)weightedOdds.x; i++)
+        {
+            weightedIndexArray[i] = 0;
+        }
+
+        for (int i = (int)weightedOdds.x; i < (int)weightedOdds.x + (int)weightedOdds.y; i++)
+        {
+            weightedIndexArray[i] = 1;
+        }
+
+        for (int i = (int)weightedOdds.x + (int)weightedOdds.y; i < (int)weightedOdds.x + (int)weightedOdds.y + +(int)weightedOdds.z; i++)
+        {
+            weightedIndexArray[i] = 2;
+        }
+
+        for (int i = (int)weightedOdds.x + (int)weightedOdds.y + +(int)weightedOdds.z; i < (int)weightedOdds.x + (int)weightedOdds.y + (int)weightedOdds.z + (int)weightedOdds.w; i++)
+        {
+            weightedIndexArray[i] = 3;
         }
     }
 
@@ -140,9 +170,7 @@ public class RaftQueue : MonoBehaviour
 
     private GameObject PickRaftType()
     {
-        int randomRange = Random.Range(0, raftTypes.Length);
-
-        return raftTypes[randomRange];
+        return raftTypes[GetWeightedRaftIndex()];
     }
 
     private void DitchBoat(int index) 
@@ -186,6 +214,13 @@ public class RaftQueue : MonoBehaviour
         float stepSize = queueWidth / (queueSize - 1);
 
         return transform.position + (queueDirection * stepSize * queuedRaft.queueLocation) - queueDirection * queueWidth * 0.5f;
+    }
+
+    private int GetWeightedRaftIndex()
+    {
+        int weightIndex = Random.Range(0, weightedIndexArray.Length);
+
+        return weightedIndexArray[weightIndex];
     }
 }
 

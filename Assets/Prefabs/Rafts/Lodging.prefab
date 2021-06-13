@@ -85,7 +85,6 @@ GameObject:
   - component: {fileID: 2349936423131791132}
   - component: {fileID: 7397516427469719091}
   - component: {fileID: 8799969943807261450}
-  - component: {fileID: 735459598408957296}
   m_Layer: 0
   m_Name: rrr
   m_TagString: Untagged
@@ -101,8 +100,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3415729115251425489}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: -0.0000000074506, y: 0.28473926, z: -0.000000029802322}
-  m_LocalScale: {x: 1.6521, y: 1.6521, z: 1.6521}
+  m_LocalPosition: {x: 0.0000000074506, y: 0.28473926, z: -0.000000029802322}
+  m_LocalScale: {x: 0.433478, y: 1.6521, z: 0.37463018}
   m_Children: []
   m_Father: {fileID: 8968272872667128451}
   m_RootOrder: 4
@@ -156,19 +155,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &735459598408957296
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3415729115251425489}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &4291805205548486527
 GameObject:
   m_ObjectHideFlags: 0
@@ -721,7 +707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b3fbb70834ebf548ac4fa2ea8ab4d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raftType: 0
+  raftType: 2
   onConnectedTriggerString: 
   northConnection: {fileID: 8666313745577845915}
   southConnection: {fileID: 380587825246536957}

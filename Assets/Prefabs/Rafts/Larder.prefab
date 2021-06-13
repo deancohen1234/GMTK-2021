@@ -707,7 +707,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8b3fbb70834ebf548ac4fa2ea8ab4d8d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  raftType: 0
+  raftType: 3
   onConnectedTriggerString: 
   northConnection: {fileID: 8666313745577845915}
   southConnection: {fileID: 380587825246536957}

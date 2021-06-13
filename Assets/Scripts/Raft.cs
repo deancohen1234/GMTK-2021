@@ -1,4 +1,5 @@
 using DG.Tweening;
+using System.Collections.Generic;
 using UnityEngine;
 
 //North = Z Forward (Global) +
@@ -39,12 +40,14 @@ public class Raft : MonoBehaviour
     private Vector3 eastConnectionOffset;
     private Vector3 westConnectionOffset;
 
+    private List<Raft> connectedRafts;
     private Collider[] wallCheckColliders;
 
     private BezierCurve moveToPlatformCurve;
     private Raft lastRaft;
 
     private bool isConnectingToPlatform;
+    private bool fullySatisfied; //if it has a lodge, a larder, and a bar
     private float curveTime;
 
     private const float WALLSPHERECHECKRADIUS = 0.25f;
@@ -64,6 +67,7 @@ public class Raft : MonoBehaviour
         }
 
         wallCheckColliders = new Collider[5];
+        connectedRafts = new List<Raft>();
 
         PrecalculateDirectionOffsets();
     }
@@ -109,26 +113,57 @@ public class Raft : MonoBehaviour
         curveTime = 0;
 
         EvaulateCollisionWalls();
+        CalculatePoints();
     }
 
     private void EvaulateCollisionWalls()
     {
-        if (lastRaft == null || raftType != RaftType.Lane) { return; }
+        if (lastRaft == null) { return; }
 
         //do an overlap boxtest with each wall to evaluate walls
         int count = 0;
 
         count = Physics.OverlapSphereNonAlloc(northConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { DisableCurrentWallColliders(count); }
+        if (count >= 2) { ProcessConnectedRaft(count); }
 
         count = Physics.OverlapSphereNonAlloc(southConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { DisableCurrentWallColliders(count); }
+        if (count >= 2) { ProcessConnectedRaft(count); }
 
         count = Physics.OverlapSphereNonAlloc(eastConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { DisableCurrentWallColliders(count); }
+        if (count >= 2) { ProcessConnectedRaft(count); ; }
 
         count = Physics.OverlapSphereNonAlloc(westConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { DisableCurrentWallColliders(count); }
+        if (count >= 2) { ProcessConnectedRaft(count); }
+    }
+
+    private void CalculatePoints()
+    {
+        int pointDelta = 1; //always start with one point
+
+        bool isFullySatisfied = IsRaftFullySatisfied();
+
+        pointDelta += isFullySatisfied ? 5 : 0;
+
+        GameManager.instance.AddPoints(pointDelta);
+    }
+
+
+    //used saved buffer to get connecte raft
+    private void ProcessConnectedRaft(int count)
+    {
+        for (int i = 0; i < wallCheckColliders.Length; i++)
+        {
+            Raft raft = GetRaftFromCollider(wallCheckColliders[i]);
+            if (raft != null && !raft.Equals(this))
+            {
+                connectedRafts.Add(raft);
+            }
+        }
+
+        if (raftType == RaftType.Lane)
+        {
+            DisableCurrentWallColliders(count);
+        }
     }
 
     public Transform GetConnectionTransform(ConnectionDirection direction)
@@ -145,6 +180,18 @@ public class Raft : MonoBehaviour
                 return westConnection;
             default:
                 return null;
+        }
+    }
+
+    public Raft GetRaftFromCollider(Collider collider)
+    {
+        if (collider != null)
+        {
+            return collider.GetComponentInParent<Raft>();
+        }
+        else
+        {
+            return null;
         }
     }
 
@@ -199,10 +246,8 @@ public class Raft : MonoBehaviour
                 return raftConnectionPosition - northConnectionOffset;
             case ConnectionDirection.South:
                 return raftConnectionPosition - southConnectionOffset;
-
             case ConnectionDirection.East:
                 return raftConnectionPosition - eastConnectionOffset;
-
             case ConnectionDirection.West:
                 return raftConnectionPosition - westConnectionOffset;
             default:
@@ -216,6 +261,52 @@ public class Raft : MonoBehaviour
 
         Vector3 anchorPosition = new Vector3(dockingXOffset * sign + transform.position.x, transform.position.y, destinationPoint.z);
         return anchorPosition;
+    }
+
+    //if there is a lodge that connected that isn't already satisfied, and it now has all it's pieces
+    private bool IsRaftFullySatisfied()
+    {
+        if (raftType == RaftType.Lodging)
+        {
+            return IsLodgingRaftComplete(this);
+        }
+        else
+        {
+            for (int i = 0; i < connectedRafts.Count; i++)
+            {
+                //only satisfied when lodging is present
+                if (connectedRafts[i].raftType == RaftType.Lodging)
+                {
+                    return IsLodgingRaftComplete(connectedRafts[i]);
+                }
+            }
+        }
+        return false;
+    }
+
+    private bool IsLodgingRaftComplete(Raft lodgeRaft)
+    {
+        short completeMask = 0;
+        for (int j = 0; j < lodgeRaft.connectedRafts.Count; j++)
+        {
+            if (lodgeRaft.connectedRafts[j].raftType == RaftType.Larder)
+            {
+                completeMask = 1 | 1;
+            }
+
+            if (lodgeRaft.connectedRafts[j].raftType == RaftType.Libations)
+            {
+                completeMask = 1 | 2;
+            }
+        }
+
+        //= 0011 = 3. So if there is a 3 then both raft types are there
+        if ((completeMask & 3) == completeMask)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     private void PrecalculateDirectionOffsets()
