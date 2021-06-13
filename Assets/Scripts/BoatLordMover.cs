@@ -24,10 +24,7 @@ public class BoatLordMover : MonoBehaviour
     private Vector3 velocity;
     private Vector3 direction;
 
-    private float waveEndTime = 0;
-
     private bool isMoving = false;
-    private bool isWaving = false;
 
     void Start()
     {
@@ -46,14 +43,6 @@ public class BoatLordMover : MonoBehaviour
         input.y = yInput;
 
         UpdateAnimation();
-
-        if (isWaving)
-        {
-            if (Time.time > waveEndTime)
-            {
-                isWaving = false;
-            }
-        }
     }
 
     private void FixedUpdate()
@@ -104,6 +93,9 @@ public class BoatLordMover : MonoBehaviour
 
     public void PlayWaveAnimation()
     {
-        waveEndTime = Time.time + waveDuration;
+        if (animator)
+        {
+            animator.SetTrigger("IsHoying");
+        }
     }
 }

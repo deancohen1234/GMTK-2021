@@ -87,6 +87,8 @@ public class GameManager : MonoBehaviour
         raftCommander.enabled = false;
         autoRotatingCamera.enabled = true;
 
+        PlayAllFireworks();
+
         endScreenInstructions.gameObject.SetActive(true);
     }
 
@@ -95,5 +97,26 @@ public class GameManager : MonoBehaviour
         currentPoints += pointDelta;
 
         pointText.text = currentPoints.ToString();
+    }
+
+    private void PlayAllFireworks()
+    {
+        Raft[] allRafts = FindObjectsOfType<Raft>();
+
+        for (int i = 0; i < allRafts.Length; i++)
+        {
+            if (allRafts[i].raftType == RaftType.Lodging)
+            {
+                //set looping
+                ParticleSystem.MainModule main = allRafts[i].fireworks.main;
+                main.loop = true;
+
+                if (allRafts[i].fullySatisfied)
+                {
+                    allRafts[i].fireworks.Play();
+                }
+            }
+
+        }
     }
 }

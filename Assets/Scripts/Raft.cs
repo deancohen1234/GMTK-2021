@@ -32,6 +32,7 @@ public class Raft : MonoBehaviour
     public GameObject[] allProps;
     public Material[] allMaterials;
     public MeshRenderer meshRenderer;
+    public ParticleSystem fireworks;
 
     [Header("Connection Sequence")]
     public int dockedLayer = 8;
@@ -45,14 +46,14 @@ public class Raft : MonoBehaviour
     private Vector3 eastConnectionOffset;
     private Vector3 westConnectionOffset;
 
-    private List<Raft> connectedRafts;
+    public List<Raft> connectedRafts;
     private Collider[] wallCheckColliders;
 
     private BezierCurve moveToPlatformCurve;
     private Raft lastRaft;
 
     private bool isConnectingToPlatform;
-    private bool fullySatisfied; //if it has a lodge, a larder, and a bar
+    public bool fullySatisfied; //if it has a lodge, a larder, and a bar
     private float curveTime;
 
     private const float WALLSPHERECHECKRADIUS = 0.25f;
@@ -132,6 +133,13 @@ public class Raft : MonoBehaviour
         isConnectingToPlatform = false;
         curveTime = 0;
 
+        //re-enable all colliders
+        northCollider.enabled = true;
+        southCollider.enabled = true;
+        eastCollider.enabled = true;
+        westCollider.enabled = true;
+        groundCollider.enabled = true;
+
         EvaulateCollisionWalls();
         CalculatePoints();
     }
@@ -144,16 +152,28 @@ public class Raft : MonoBehaviour
         int count = 0;
 
         count = Physics.OverlapSphereNonAlloc(northConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { ProcessConnectedRaft(count); }
+        if (count >= 2) 
+        {
+            Debug.Log("North Collision");
+        }
 
         count = Physics.OverlapSphereNonAlloc(southConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { ProcessConnectedRaft(count); }
+        if (count >= 2) 
+        {
+            ProcessConnectedRaft(count);
+        }
 
         count = Physics.OverlapSphereNonAlloc(eastConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { ProcessConnectedRaft(count); ; }
+        if (count >= 2) 
+        {
+            ProcessConnectedRaft(count);
+        }
 
         count = Physics.OverlapSphereNonAlloc(westConnection.position + Vector3.up * 0.5f, WALLSPHERECHECKRADIUS, wallCheckColliders, (1 << dockedLayer));
-        if (count >= 2) { ProcessConnectedRaft(count); }
+        if (count >= 2)
+        {
+            ProcessConnectedRaft(count); 
+        }
     }
 
     private void CalculatePoints()
@@ -161,6 +181,27 @@ public class Raft : MonoBehaviour
         int pointDelta = 1; //always start with one point
 
         bool isFullySatisfied = IsRaftFullySatisfied();
+
+        if (isFullySatisfied)
+        {
+            if (raftType == RaftType.Lodging)
+            {
+                fireworks.Play();
+                fullySatisfied = true;
+            }
+            else
+            {
+                for (int i = 0; i < connectedRafts.Count; i++)
+                {
+                    //only satisfied when lodging is present
+                    if (connectedRafts[i].raftType == RaftType.Lodging)
+                    {
+                        connectedRafts[i].fireworks.Play();
+                        connectedRafts[i].fullySatisfied = true;
+                    }
+                }
+            }
+        }
 
         pointDelta += isFullySatisfied ? 5 : 0;
 
@@ -177,6 +218,7 @@ public class Raft : MonoBehaviour
             if (raft != null && !raft.Equals(this))
             {
                 connectedRafts.Add(raft);
+                raft.connectedRafts.Add(this);
             }
         }
 
@@ -311,17 +353,17 @@ public class Raft : MonoBehaviour
         {
             if (lodgeRaft.connectedRafts[j].raftType == RaftType.Larder)
             {
-                completeMask = 1 | 1;
+                completeMask |= 1;
             }
 
             if (lodgeRaft.connectedRafts[j].raftType == RaftType.Libations)
             {
-                completeMask = 1 | 2;
+                completeMask |= 2;
             }
         }
 
         //= 0011 = 3. So if there is a 3 then both raft types are there
-        if ((completeMask & 3) == completeMask)
+        if (completeMask == (short)3)
         {
             return true;
         }

@@ -58,13 +58,20 @@ public class RaftCommander : MonoBehaviour
             Raft closestRaft = raftQueue.GetSelectedRaft();
             if (closestRaft != null)
             {
+                //temp disable all colliders on raft
+                closestRaft.northCollider.enabled = false;
+                closestRaft.southCollider.enabled = false;
+                closestRaft.eastCollider.enabled = false;
+                closestRaft.westCollider.enabled = false;
+                closestRaft.groundCollider.enabled = false;
+
                 closestRaft.JoinRaft(currentRaft, currentDirection);
             }
         }
 
         if (boatLordMover != null)
         {
-
+            boatLordMover.PlayWaveAnimation();
         }
     }
 
