@@ -6,6 +6,7 @@ public class RaftCommander : MonoBehaviour
 {
     [Header("References")]
     public RaftQueue raftQueue;
+    public BoatLordMover boatLordMover;
     public Transform raftPlacementSelector;
 
     [Header("Raft Detection")]
@@ -59,7 +60,12 @@ public class RaftCommander : MonoBehaviour
             {
                 closestRaft.JoinRaft(currentRaft, currentDirection);
             }
-        }      
+        }
+
+        if (boatLordMover != null)
+        {
+
+        }
     }
 
     private void CheckForCurrentRaft()

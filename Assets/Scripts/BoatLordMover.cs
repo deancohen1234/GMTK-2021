@@ -5,9 +5,17 @@ using UnityEngine;
 [RequireComponent(typeof(Rigidbody))]
 public class BoatLordMover : MonoBehaviour
 {
+    [Header("References")]
+    public Animator animator;
+    public Transform frogTransform;
+
     [Header("Movement")]
     public float maxSpeed;
     public float maxAcceleration;
+    public float maxRotationAcceleration = 10f;
+
+    [Header("Animation")]
+    public float waveDuration = 0.75f;
 
     private Vector2 input;
 
@@ -15,6 +23,11 @@ public class BoatLordMover : MonoBehaviour
 
     private Vector3 velocity;
     private Vector3 direction;
+
+    private float waveEndTime = 0;
+
+    private bool isMoving = false;
+    private bool isWaving = false;
 
     void Start()
     {
@@ -31,6 +44,16 @@ public class BoatLordMover : MonoBehaviour
 
         input.x = xInput;
         input.y = yInput;
+
+        UpdateAnimation();
+
+        if (isWaving)
+        {
+            if (Time.time > waveEndTime)
+            {
+                isWaving = false;
+            }
+        }
     }
 
     private void FixedUpdate()
@@ -51,5 +74,36 @@ public class BoatLordMover : MonoBehaviour
         Vector3 velocityChange = Vector3.MoveTowards(body.velocity, desiredVelocity, maxAcceleration * Time.fixedDeltaTime);
 
         velocity = velocityChange;
+    }
+
+    private void UpdateAnimation()
+    {
+        if (body.velocity.sqrMagnitude > 0.05f)
+        {
+            isMoving = true;
+        }
+        else
+        {
+            isMoving = false;
+        }
+
+        //rotate player towards move direction
+        if (direction != Vector3.zero)
+        {
+            Quaternion desiredRotation = Quaternion.LookRotation(Vector3.ProjectOnPlane(-direction, Vector3.up));
+
+            transform.rotation = Quaternion.RotateTowards(frogTransform.rotation, desiredRotation, Time.deltaTime * maxRotationAcceleration);
+        }
+
+        //set animation triggers
+        if (animator)
+        {
+            animator.SetBool("IsMoving", isMoving);
+        }
+    }
+
+    public void PlayWaveAnimation()
+    {
+        waveEndTime = Time.time + waveDuration;
     }
 }
