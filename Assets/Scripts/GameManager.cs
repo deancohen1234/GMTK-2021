@@ -14,6 +14,9 @@ public class GameManager : MonoBehaviour
     public AutoOrbitingCamera autoRotatingCamera;
     public RaftQueue raftQueue;
     public RaftCommander raftCommander;
+
+    [Header("UI")]
+    public GameObject endScreen;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI pointText;
     public TextMeshProUGUI endScreenInstructions;
@@ -68,7 +71,14 @@ public class GameManager : MonoBehaviour
         {
             if (Input.GetKeyDown(KeyCode.Space))
             {
-                SceneManager.LoadScene(mainSceneName);
+                if (endScreen.activeInHierarchy)
+                {
+                    SceneManager.LoadScene(mainSceneName);
+                }
+                else
+                {
+                    ShowEndCard();
+                }
             }
         }
         
@@ -94,9 +104,14 @@ public class GameManager : MonoBehaviour
 
     public void AddPoints(int pointDelta)
     {
-        currentPoints += pointDelta;
+        currentPoints = Mathf.Max(pointDelta + currentPoints, 0);
 
         pointText.text = currentPoints.ToString();
+    }
+
+    private void ShowEndCard()
+    {
+        endScreen.SetActive(true);
     }
 
     private void PlayAllFireworks()

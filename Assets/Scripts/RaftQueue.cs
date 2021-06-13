@@ -187,6 +187,8 @@ public class RaftQueue : MonoBehaviour
         raft.transform.DOMove(spawnPoint.position, ditchMoveDuration).SetEase(ditchEase);
         Destroy(raft.gameObject, ditchMoveDuration + 1f);
 
+        GameManager.instance.AddPoints(-1);
+
         RemoveRaftFromQueue(index);
     }
 
