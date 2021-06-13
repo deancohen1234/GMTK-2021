@@ -14,6 +14,7 @@ public class GameManager : MonoBehaviour
     public RaftCommander raftCommander;
     public TextMeshProUGUI timerText;
     public TextMeshProUGUI pointText;
+    public TextMeshProUGUI endScreenInstructions;
 
     [Header("Time")]
     public float gameDuration = 120f; //in seconds
@@ -63,7 +64,7 @@ public class GameManager : MonoBehaviour
         }
         else
         {
-            if (Input.anyKey)
+            if (Input.GetKeyDown(KeyCode.Space))
             {
                 SceneManager.LoadScene(mainSceneName);
             }
@@ -82,6 +83,8 @@ public class GameManager : MonoBehaviour
 
         raftQueue.enabled = false;
         raftCommander.enabled = false;
+
+        endScreenInstructions.gameObject.SetActive(true);
     }
 
     public void AddPoints(int pointDelta)

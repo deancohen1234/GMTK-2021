@@ -137,7 +137,11 @@ public class RaftQueue : MonoBehaviour
     {
         if (queuedRafts.Count > 0)
         {
-            int indexFromSelection = (int)Mathf.Repeat(currentSelection, queuedRafts.Count);
+            QueuedRaft queuedRaft = queuedRafts.Find(r => r.queueLocation == currentSelection);
+
+            if (queuedRaft.raft == null) { return null; }
+
+            int indexFromSelection = queuedRafts.IndexOf(queuedRaft);
             Raft raft = queuedRafts[indexFromSelection].raft;
 
             RemoveRaftFromQueue(indexFromSelection);
@@ -159,12 +163,15 @@ public class RaftQueue : MonoBehaviour
 
             QueuedRaft queuedRaft;
             queuedRaft.raft = raft.GetComponent<Raft>();
-            queuedRaft.queueLocation = queuedRafts.Count;
+            queuedRaft.queueLocation = FindEmptyQueueSlot();
             queuedRaft.ditchQueueTime = Time.time + Random.Range(waitInQueueDurationMinMax.x, waitInQueueDurationMinMax.y);
 
-            queuedRafts.Add(queuedRaft);
+            Vector3 destinationPosition = GetQueueRaftPosition(queuedRaft);
+            queuedRaft.raft.transform.DOMove(destinationPosition, moveIntoQueueDuration).SetEase(moveIntoQueueEase);
 
-            OnQueueChanged();
+            Debug.Log(queuedRaft.queueLocation);
+
+            queuedRafts.Add(queuedRaft);
         }
     }
 
@@ -188,19 +195,20 @@ public class RaftQueue : MonoBehaviour
         queuedRafts.RemoveAt(index);
     }
 
-    private void OnQueueChanged()
-    {
-        for (int i = 0; i < queuedRafts.Count; i++)
+    private int FindEmptyQueueSlot()
+    {   
+        for (int i = 0; i < queueSize; i++)
         {
-            QueuedRaft queuedRaft = queuedRafts[i];
-
-            //reorder queue if necessary
-            queuedRaft.queueLocation = i;
-
-            //move all queued rafts to their proper positions
-            Vector3 destinationPosition = GetQueueRaftPosition(queuedRaft);
-            queuedRaft.raft.transform.DOMove(destinationPosition, moveIntoQueueDuration).SetEase(moveIntoQueueEase);
+            //if no raft exists in this list then fill that slot
+            if (queuedRafts.Find(r => r.queueLocation == i).raft == null)
+            {
+                return i;
+            }
         }
+
+        Debug.LogError("Uh oh we returned -1");
+        return -1;
+        
     }
 
     private void UpdateSelection()
